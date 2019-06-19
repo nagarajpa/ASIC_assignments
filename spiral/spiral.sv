@@ -104,7 +104,7 @@ module spiral #(
   always_comb begin
     for (int i =0; i < MAX_R; i++) begin
       for(int j =0; j < MAX_C; j++) begin
-        matrix_data_nxt[i][j] = matrix_data_nxt[i][j];
+        matrix_data_nxt[i][j] = matrix_data[i][j];
       end
     end
     matrix_data_nxt[wr_addr_r][wr_addr_c] = data_in;
@@ -115,7 +115,7 @@ module spiral #(
     rd_addr_c_nxt    =  rd_addr_c;
     total_count_nxt  =  total_count;
     row_reg_nxt      =  row_reg;
-    col_reg_nxt      =  col_reg_nxt;
+    col_reg_nxt      =  col_reg;
     row_reg_st_nxt      =  row_reg_st;
     col_reg_st_nxt      =  col_reg_st;
     data_out_valid_nxt  =  data_out_valid;
