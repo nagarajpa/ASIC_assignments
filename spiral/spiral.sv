@@ -1,3 +1,13 @@
+///////////////////////////////////////////////////////////
+// Spiral matrix module.
+// This module takes a matrix as input with dimensions of row and column 
+//
+// The matrix outputs the matrix elemenets in spiral form i.e it traces the rows and columns in 
+//spiral fashion.
+//    -> -> -> ->
+
+///////////////////////////////////////////////////////////
+
 module spiral #(
   parameter DATA_WIDTH = 8,
   parameter R_WIDTH  = 3,
@@ -160,6 +170,12 @@ module spiral #(
           row_reg_st_nxt    = row_reg_st + 1'b1;
           wr_addr_c_nxt   = '0;
           wr_addr_r_nxt   = '0;
+        end
+        else if (data_in_valid && data_in_rdy && (wr_addr_c + 1'b1) == col) begin
+          next_state      = WR_ROW;
+          wr_addr_c_nxt   = '0;
+          wr_addr_r_nxt   = wr_addr_r + 1'b1;
+          total_count_nxt = total_count + 1'b1;
         end
         else if (data_in_valid && data_in_rdy) begin
           next_state      = WR_COL;

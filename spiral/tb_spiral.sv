@@ -18,7 +18,7 @@ module tb_spiral ();
 
 
 
-  spiral dut(.*);
+  spiral #(DATA_WIDTH, R_WIDTH, C_WIDTH) dut(.*);
 
 
   logic done;
@@ -33,7 +33,7 @@ module tb_spiral ();
     end
     rstn <= 1'b1;
     @(posedge clk);
-    write(3'b100,3'b100);
+    write(3'b111,3'b101);
     @(posedge clk);
   end
 
