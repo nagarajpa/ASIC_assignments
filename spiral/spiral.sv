@@ -96,7 +96,7 @@ module spiral #(
     end
     else  begin
       data_in_rdy       <= (next_state == IDLE || next_state == WR_ROW || next_state == WR_COL);
-      data_out_valid    <= data_out_valid_nxt;//(next_state == L2R || next_state == U2D || next_state == R2L || next_state == D2U);
+      data_out_valid    <= data_out_valid_nxt;
       total_count       <= total_count_nxt;
       for (int i =0; i < MAX_R; i++) begin
         for(int j =0; j < MAX_C; j++) begin
@@ -127,14 +127,14 @@ module spiral #(
       end
     end
     matrix_data_nxt[wr_addr_r][wr_addr_c] = data_in;
-    next_state       =  state;
-    wr_addr_r_nxt    =  wr_addr_r;
-    wr_addr_c_nxt    =  wr_addr_c;
-    rd_addr_r_nxt    =  rd_addr_r;
-    rd_addr_c_nxt    =  rd_addr_c;
-    total_count_nxt  =  total_count;
-    row_reg_nxt      =  row_reg;
-    col_reg_nxt      =  col_reg;
+    next_state          =  state;
+    wr_addr_r_nxt       =  wr_addr_r;
+    wr_addr_c_nxt       =  wr_addr_c;
+    rd_addr_r_nxt       =  rd_addr_r;
+    rd_addr_c_nxt       =  rd_addr_c;
+    total_count_nxt     =  total_count;
+    row_reg_nxt         =  row_reg;
+    col_reg_nxt         =  col_reg;
     row_reg_st_nxt      =  row_reg_st;
     col_reg_st_nxt      =  col_reg_st;
     data_out_valid_nxt  =  data_out_valid;
@@ -142,148 +142,148 @@ module spiral #(
     case (state)
       IDLE: begin 
         if (data_in_valid && data_in_rdy) begin
-          next_state       =  WR_COL;
+          next_state                            =  WR_COL;
           matrix_data_nxt[wr_addr_r][wr_addr_c] = data_in;
-          wr_addr_c_nxt    = wr_addr_c + 1'b1; 
-          total_count_nxt  = total_count + 1'b1;
-          row_reg_nxt      = row;
-          col_reg_nxt      = col;
+          wr_addr_c_nxt                         = wr_addr_c + 1'b1; 
+          total_count_nxt                       = total_count + 1'b1;
+          row_reg_nxt                           = row;
+          col_reg_nxt                           = col;
         end
         if (data_in_valid && data_in_rdy && (wr_addr_c + 1'b1) == col) begin
-          next_state       = WR_ROW;
-          wr_addr_c_nxt    = '0;
-          wr_addr_r_nxt    = wr_addr_r + 1'b1;
+          next_state                            = WR_ROW;
+          wr_addr_c_nxt                         = '0;
+          wr_addr_r_nxt                         = wr_addr_r + 1'b1;
         end
         if (data_in_valid && data_in_rdy && ((wr_addr_r + 1'b1) == row) && ((wr_addr_c + 1'b1) == col)) begin
-          next_state       = L2R;
-          row_reg_st_nxt    = row_reg_st + 1'b1;
-          data_out_valid_nxt = '1;
-          wr_addr_c_nxt    = '0;
-          wr_addr_r_nxt    = '0;
+          next_state                            = L2R;
+          row_reg_st_nxt                        = row_reg_st + 1'b1;
+          data_out_valid_nxt                    = '1;
+          wr_addr_c_nxt                         = '0;
+          wr_addr_r_nxt                         = '0;
         end
       end
       WR_COL: begin
         if(data_in_valid && data_in_rdy && ((wr_addr_c + 1'b1) == col) && ((wr_addr_r+ 1'b1) == row)) begin
-          next_state      = L2R;
-          row_reg_st_nxt    = row_reg_st + 1'b1;
-          data_out_valid_nxt = '1;
-          wr_addr_c_nxt   = '0;
-          wr_addr_r_nxt   = '0;
+          next_state                            = L2R;
+          row_reg_st_nxt                        = row_reg_st + 1'b1;
+          data_out_valid_nxt                    = '1;
+          wr_addr_c_nxt                         = '0;
+          wr_addr_r_nxt                         = '0;
         end
         else if(data_in_valid && data_in_rdy && ((wr_addr_c + 1'b1) == col)) begin
-          next_state      = WR_ROW;
-          wr_addr_c_nxt   = '0;
-          wr_addr_r_nxt   = wr_addr_r + 1'b1;
-          total_count_nxt = total_count + 1'b1;
+          next_state                            = WR_ROW;
+          wr_addr_c_nxt                         = '0;
+          wr_addr_r_nxt                         = wr_addr_r + 1'b1;
+          total_count_nxt                       = total_count + 1'b1;
         end
         else if (data_in_valid && data_in_rdy) begin
-          next_state     = WR_COL;
-          wr_addr_c_nxt  = wr_addr_c + 1'b1;
-          total_count_nxt = total_count + 1'b1;
+          next_state                            = WR_COL;
+          wr_addr_c_nxt                         = wr_addr_c + 1'b1;
+          total_count_nxt                       = total_count + 1'b1;
         end
       end
       WR_ROW: begin
         if(data_in_valid && data_in_rdy && ((wr_addr_r + 1'b1) == row) && (wr_addr_c + 1'b1) == col) begin
-          next_state      = L2R;
-          data_out_valid_nxt = '1;
-          row_reg_st_nxt    = row_reg_st + 1'b1;
-          wr_addr_c_nxt   = '0;
-          wr_addr_r_nxt   = '0;
+          next_state                            = L2R;
+          data_out_valid_nxt                    = '1;
+          row_reg_st_nxt                        = row_reg_st + 1'b1;
+          wr_addr_c_nxt                         = '0;
+          wr_addr_r_nxt                         = '0;
         end
         else if (data_in_valid && data_in_rdy && (wr_addr_c + 1'b1) == col) begin
-          next_state      = WR_ROW;
-          wr_addr_c_nxt   = '0;
-          wr_addr_r_nxt   = wr_addr_r + 1'b1;
-          total_count_nxt = total_count + 1'b1;
+          next_state                            = WR_ROW;
+          wr_addr_c_nxt                         = '0;
+          wr_addr_r_nxt                         = wr_addr_r + 1'b1;
+          total_count_nxt                       = total_count + 1'b1;
         end
         else if (data_in_valid && data_in_rdy) begin
-          next_state      = WR_COL;
-          wr_addr_c_nxt   = wr_addr_c + 1'b1;
-          total_count_nxt = total_count + 1'b1;
+          next_state                            = WR_COL;
+          wr_addr_c_nxt                         = wr_addr_c + 1'b1;
+          total_count_nxt                       = total_count + 1'b1;
         end
       end    
       L2R: begin
         if (data_out_valid && data_out_rdy && ((rd_addr_c + 1'b1) == col_reg)) begin
-          next_state      = U2D;
-          col_reg_nxt     = col_reg - 1'b1;
-          rd_addr_r_nxt   = rd_addr_r + 1'b1;
-          total_count_nxt = total_count - 1'b1;
+          next_state                            = U2D;
+          col_reg_nxt                           = col_reg - 1'b1;
+          rd_addr_r_nxt                         = rd_addr_r + 1'b1;
+          total_count_nxt                       = total_count - 1'b1;
         end
         else if (data_out_valid && data_out_rdy) begin
-          rd_addr_c_nxt   = rd_addr_c + 1'b1;
-          total_count_nxt = total_count - 1'b1;
+          rd_addr_c_nxt                         = rd_addr_c + 1'b1;
+          total_count_nxt                       = total_count - 1'b1;
         end
         if ( total_count == '0) begin
-          next_state         = IDLE;
-          rd_addr_r_nxt      = '0;
-          rd_addr_c_nxt      = '0;
-          data_out_valid_nxt = '0;
-          col_reg_st_nxt     = '0;
-          row_reg_st_nxt     = '0;
-          total_count_nxt    = '0;
+          next_state                            = IDLE;
+          rd_addr_r_nxt                         = '0;
+          rd_addr_c_nxt                         = '0;
+          data_out_valid_nxt                    = '0;
+          col_reg_st_nxt                        = '0;
+          row_reg_st_nxt                        = '0;
+          total_count_nxt                       = '0;
         end
       end
       U2D: begin
         if (data_out_valid && data_out_rdy && ((rd_addr_r + 1'b1) == row_reg)) begin
-          next_state      = R2L;
-          row_reg_nxt     = row_reg - 1'b1;
-          rd_addr_c_nxt   = rd_addr_c - 1'b1;
-          total_count_nxt = total_count - 1'b1;
+          next_state                            = R2L;
+          row_reg_nxt                           = row_reg - 1'b1;
+          rd_addr_c_nxt                         = rd_addr_c - 1'b1;
+          total_count_nxt                       = total_count - 1'b1;
         end
         else if (data_out_valid && data_out_rdy) begin
-          rd_addr_r_nxt   = rd_addr_r + 1'b1;
-          total_count_nxt = total_count - 1'b1;
+          rd_addr_r_nxt                         = rd_addr_r + 1'b1;
+          total_count_nxt                       = total_count - 1'b1;
         end
         if ( total_count == '0) begin
           next_state      = IDLE;
-          rd_addr_r_nxt      = '0;
-          rd_addr_c_nxt      = '0;
-          data_out_valid_nxt = '0;
-          col_reg_st_nxt     = '0;
-          row_reg_st_nxt     = '0;
-          total_count_nxt    = '0;
+          rd_addr_r_nxt                         = '0;
+          rd_addr_c_nxt                         = '0;
+          data_out_valid_nxt                    = '0;
+          col_reg_st_nxt                        = '0;
+          row_reg_st_nxt                        = '0;
+          total_count_nxt                       = '0;
         end
       end
       R2L: begin
         if (data_out_valid && data_out_rdy && ((rd_addr_c) == col_reg_st)) begin
-          next_state      = D2U;
-          col_reg_st_nxt  = col_reg_st + 1'b1;
-          rd_addr_r_nxt   = rd_addr_r - 1'b1;
-          total_count_nxt = total_count - 1'b1;
+          next_state                            = D2U;
+          col_reg_st_nxt                        = col_reg_st + 1'b1;
+          rd_addr_r_nxt                         = rd_addr_r - 1'b1;
+          total_count_nxt                       = total_count - 1'b1;
         end
         else if (data_out_valid && data_out_rdy) begin
-          rd_addr_c_nxt   = rd_addr_c - 1'b1;
-          total_count_nxt = total_count - 1'b1;
+          rd_addr_c_nxt                         = rd_addr_c - 1'b1;
+          total_count_nxt                       = total_count - 1'b1;
         end
         if ( total_count == '0) begin
           next_state      = IDLE;
-          rd_addr_r_nxt      = '0;
-          rd_addr_c_nxt      = '0;
-          data_out_valid_nxt = '0;
-          col_reg_st_nxt     = '0;
-          row_reg_st_nxt     = '0;
-          total_count_nxt    = '0;
+          rd_addr_r_nxt                         = '0;
+          rd_addr_c_nxt                         = '0;
+          data_out_valid_nxt                    = '0;
+          col_reg_st_nxt                        = '0;
+          row_reg_st_nxt                        = '0;
+          total_count_nxt                       = '0;
         end
       end
       D2U: begin
         if (data_out_valid && data_out_rdy && ((rd_addr_r) == row_reg_st)) begin
-          next_state      = L2R;
-          row_reg_st_nxt  = row_reg_st + 1'b1;
-          rd_addr_c_nxt   = rd_addr_c + 1'b1;
-          total_count_nxt = total_count - 1'b1;
+          next_state                            = L2R;
+          row_reg_st_nxt                        = row_reg_st + 1'b1;
+          rd_addr_c_nxt                         = rd_addr_c + 1'b1;
+          total_count_nxt                       = total_count - 1'b1;
         end
         else if (data_out_valid && data_out_rdy) begin
-          rd_addr_r_nxt   = rd_addr_r - 1'b1;
-          total_count_nxt = total_count - 1'b1;
+          rd_addr_r_nxt                         = rd_addr_r - 1'b1;
+          total_count_nxt                       = total_count - 1'b1;
         end
         if ( total_count == '0) begin
           next_state      = IDLE;
-          rd_addr_r_nxt      = '0;
-          rd_addr_c_nxt      = '0;
-          data_out_valid_nxt = '0;
-          col_reg_st_nxt     = '0;
-          row_reg_st_nxt     = '0;
-          total_count_nxt    = '0;
+          rd_addr_r_nxt                         = '0;
+          rd_addr_c_nxt                         = '0;
+          data_out_valid_nxt                    = '0;
+          col_reg_st_nxt                        = '0;
+          row_reg_st_nxt                        = '0;
+          total_count_nxt                       = '0;
         end
       end
     endcase
