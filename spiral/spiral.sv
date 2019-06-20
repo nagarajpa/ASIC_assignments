@@ -199,6 +199,9 @@ module spiral #(
           rd_addr_r_nxt      = '0;
           rd_addr_c_nxt      = '0;
           data_out_valid_nxt = '0;
+          col_reg_st_nxt     = '0;
+          row_reg_st_nxt     = '0;
+          total_count_nxt    = '0;
         end
       end
       U2D: begin
@@ -217,6 +220,9 @@ module spiral #(
           rd_addr_r_nxt      = '0;
           rd_addr_c_nxt      = '0;
           data_out_valid_nxt = '0;
+          col_reg_st_nxt     = '0;
+          row_reg_st_nxt     = '0;
+          total_count_nxt    = '0;
         end
       end
       R2L: begin
@@ -235,6 +241,9 @@ module spiral #(
           rd_addr_r_nxt      = '0;
           rd_addr_c_nxt      = '0;
           data_out_valid_nxt = '0;
+          col_reg_st_nxt     = '0;
+          row_reg_st_nxt     = '0;
+          total_count_nxt    = '0;
         end
       end
       D2U: begin
@@ -253,6 +262,9 @@ module spiral #(
           rd_addr_r_nxt      = '0;
           rd_addr_c_nxt      = '0;
           data_out_valid_nxt = '0;
+          col_reg_st_nxt     = '0;
+          row_reg_st_nxt     = '0;
+          total_count_nxt    = '0;
         end
       end
     endcase

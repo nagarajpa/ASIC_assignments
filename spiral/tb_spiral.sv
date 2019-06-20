@@ -33,7 +33,20 @@ module tb_spiral ();
     end
     rstn <= 1'b1;
     @(posedge clk);
-    write(3'b111,3'b101);
+    
+    write_new(3'b111,3'b101);
+    @(posedge clk);
+    wait (data_in_rdy == 1'b1);
+    write_new(3'b010, 3'b110);
+    @(posedge clk);
+    wait (data_in_rdy == 1'b1);
+    write_new(3'b001, 3'b100);
+    @(posedge clk);
+    wait (data_in_rdy == 1'b1);
+    write_new(3'b111, 3'b001);
+    @(posedge clk);
+    wait (data_in_rdy == 1'b1);
+    write_new(3'b111, 3'b010);
     @(posedge clk);
   end
 
@@ -57,6 +70,26 @@ module tb_spiral ();
     end  
   endtask
 
-  
+
+  task write_new (input logic [R_WIDTH-1:0] rowt, input logic [C_WIDTH-1:0] colt);
+    //logic tmp;
+    col <= colt;
+    row <= rowt;
+
+    for (logic [R_WIDTH-1:0] i=0;i < rowt; i++ ) begin
+      for(logic [C_WIDTH-1:0] j=0; j < colt; j++) begin
+        //tmp = $urandom(); 
+        data_in_valid <= 1'b1;//$urandom(); //tmp;
+
+        //if (tmp == 1'b1) 
+          data_in       <= $urandom();
+        //else
+        //  data_in     <= data_in;
+        @(posedge clk);
+        wait (data_in_rdy == 1'b1);
+      end
+    end
+    data_in_valid <= '0;
+  endtask
   
   endmodule
