@@ -31,7 +31,7 @@ logic [M+N-1:0]        sum, sum_nxt;
 logic [M-1:0] wr_addr, wr_addr_nxt, rd_addr, rd_addr_nxt;
 logic [M-1:0] count, count_nxt;
 logic count_reached;
-logic [N-1:0] old_sample, old_sample_nxt;
+logic [N-1:0] old_sample_nxt;
 
 always_ff @(posedge clk or negedge rstn) begin
   if (!rstn) begin
@@ -40,7 +40,6 @@ always_ff @(posedge clk or negedge rstn) begin
     count_reached <= '0;
     sum           <= '0;
     average_valid <= '0;
-    old_sample    <= '0;
     for (int i = 0; i < NUM_SAMPLES; i++) begin
       mem_data[i] <= '0;
     end
@@ -51,7 +50,6 @@ always_ff @(posedge clk or negedge rstn) begin
     count_reached <= ((rd_addr == '0) || count_reached);
     sum           <= sum_nxt;
     average_valid <=  ((count_reached || rd_addr == '0) && sample_valid);
-    old_sample    <= old_sample_nxt; 
     for (int i = 0; i < NUM_SAMPLES; i++) begin
       mem_data[i] <= mem_data[i];
     end
@@ -62,7 +60,9 @@ always_ff @(posedge clk or negedge rstn) begin
 end
 
 assign wr_addr_nxt = sample_valid ? (wr_addr+1'b1) : wr_addr;
-assign old_sample_nxt  =  average_valid ? mem_data[rd_addr] : old_sample;
+//generate value of 2**M oldest sample except when count is not reached in which case generate zeros
+assign old_sample_nxt    = average_valid ? mem_data[rd_addr]:
+                                          (count_reached    ?  mem_data[rd_addr] : '0);
 
 always_comb begin
   rd_addr_nxt = rd_addr;
@@ -88,7 +88,7 @@ end
 
 
 
-
+//caluclate the running sum
 assign sum_nxt     = sample_valid? (sum + ({N{sample_valid}} & sample) - old_sample_nxt): sum; 
 
 assign average     = sum >> M;
