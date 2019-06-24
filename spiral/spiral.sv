@@ -126,7 +126,9 @@ module spiral #(
         matrix_data_nxt[i][j] = matrix_data[i][j];
       end
     end
-    matrix_data_nxt[wr_addr_r][wr_addr_c] = data_in;
+    if (data_in_valid && data_in_rdy) begin
+      matrix_data_nxt[wr_addr_r][wr_addr_c] = data_in;
+    end
     next_state          =  state;
     wr_addr_r_nxt       =  wr_addr_r;
     wr_addr_c_nxt       =  wr_addr_c;
@@ -143,7 +145,7 @@ module spiral #(
       IDLE: begin 
         if (data_in_valid && data_in_rdy) begin
           next_state                            =  WR_COL;
-          matrix_data_nxt[wr_addr_r][wr_addr_c] = data_in;
+          //matrix_data_nxt[wr_addr_r][wr_addr_c] = data_in;
           wr_addr_c_nxt                         = wr_addr_c + 1'b1; 
           total_count_nxt                       = total_count + 1'b1;
           row_reg_nxt                           = row;
