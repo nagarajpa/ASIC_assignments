@@ -34,70 +34,7 @@ logic [WORD_WIDTH-1:0] data_reg, data_reg_nxt;
 
 
 
-/////////////////////////////////////////////
-//FV
 
-//s_ready should never be asserted if the buffer is full
-no_s_ready_when_full: assert property (
-  @(posedge clk) disable iff(!rstn)
-  !(state == FULL && s_ready)
-);
-
-//m_valid should never be de-asserted if the buffer is full
-m_valid_must_when_full: assert property (
-  @(posedge clk) disable iff(!rstn)
-  ((state == FULL) |=> m_valid)
-);
-
-//data output should never change if m_ready isnt available
-m_data_stable: assert property (
-  @(posedge clk) disable iff(!rstn)
-  ((!m_ready && m_valid) |=> $stable(m_data))
-);
-
-
-//full flow operation
-flow_operation: assert property (
-  @(posedge clk) disable iff (!rstn)
-  (m_valid && m_ready && s_valid && s_ready)[*2] |-> (m_data == $past(s_data)) 
-);
-
-
-//reset should clear valids.
-RESET_CLEARS_IVALID: assert property (
-	@(posedge clk) (!rstn |=> !m_valid)
-);
-
-//property IDATA_HELD_WHEN_NOT_READY;
-//	@(posedge clk) disable iff (!rstn)
-//	s_valid && !s_ready |=> s_valid && $stable(i_data);
-//endproperty
-//
-//assert IDATA_HELD_WHEN_NOT_READY;
-// Rule #1:
-//	Once o_valid goes high, the data cannot change until the
-//	clock after m_ready
-IDATA_HELD_WHEN_NOT_READY: assert property (@(posedge clk)
-	disable iff (!rstn)
-	m_valid && !m_ready
-	|=> (m_valid && $stable(m_data)));
-
-
-
-cover property (@(posedge clk)
-		disable iff (!rstn)
-		(!m_valid)
-		##1 m_valid &&  s_ready [*3]
-		##1 m_valid && !s_ready
-		##1 m_valid &&  s_ready [*2]
-		##1 m_valid && !s_ready [*2]
-		##1 m_valid &&  s_ready [*3]
-		// Wait for the design to clear
-		##1 m_valid && s_ready [*0:5]);
-
-
-
-/////////////////////////////////////////////
 
 always_ff  @(posedge clk or negedge rstn) begin
   if(!rstn) begin
@@ -167,6 +104,67 @@ always_comb begin
   endcase
   //end
 end
+
+
+/////////////////////////////////////////////
+//FV
+
+//s_ready should never be asserted if the buffer is full
+no_s_ready_when_full: assert property (
+  @(posedge clk) disable iff(!rstn)
+  !(state == FULL && s_ready)
+);
+
+//m_valid should never be de-asserted if the buffer is full
+m_valid_must_when_full: assert property (
+  @(posedge clk) disable iff(!rstn)
+  ((state == FULL) |=> m_valid)
+);
+
+//data output should never change if m_ready isnt available
+m_data_stable: assert property (
+  @(posedge clk) disable iff(!rstn)
+  ((!m_ready && m_valid) |=> $stable(m_data))
+);
+
+
+//full flow operation
+flow_operation: assert property (
+  @(posedge clk) disable iff (!rstn)
+  (m_valid && m_ready && s_valid && s_ready)[*2] |-> (m_data == $past(s_data)) 
+);
+
+
+//reset should clear valids.
+RESET_CLEARS_IVALID: assert property (
+	@(posedge clk) (!rstn |=> !m_valid)
+);
+
+//assert IDATA_HELD_WHEN_NOT_READY;
+// Rule #1:
+//	Once o_valid goes high, the data cannot change until the
+//	clock after m_ready
+IDATA_HELD_WHEN_NOT_READY: assert property (@(posedge clk)
+	disable iff (!rstn)
+	m_valid && !m_ready
+	|=> (m_valid && $stable(m_data)));
+
+
+
+cover property (@(posedge clk)
+		disable iff (!rstn)
+		(!m_valid)
+		##1 m_valid &&  s_ready [*3]
+		##1 m_valid && !s_ready
+		##1 m_valid &&  s_ready [*2]
+		##1 m_valid && !s_ready [*2]
+		##1 m_valid &&  s_ready [*3]
+		// Wait for the design to clear
+		##1 m_valid && s_ready [*0:5]);
+
+
+
+/////////////////////////////////////////////
 
 
 
