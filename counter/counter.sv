@@ -18,6 +18,7 @@ module counter
 );
 
 logic [1:0] count;
+logic [WIDTH-1:0] counter_mod;
 
 always_ff @(posedge clk or negedge rstn)
 begin
@@ -48,5 +49,11 @@ begin
     counter <= counter +1;
   end
 end
+
+//FV
+assert property (
+  @(posedge clk) disable iff(!rstn || counter == '0)
+  (counter % 3 != '0)
+);
 
 endmodule
